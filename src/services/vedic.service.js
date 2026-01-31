@@ -12,15 +12,17 @@ async function callVedic(endpoint, payload) {
   const cached = getCache(cacheKey);
   if (cached) return cached;
 
-  const response = await client.post(
-    endpoint,
-    payload,
-    { params: { api_key: process.env.VEDIC_API_KEY } }
-  );
+  const response = await client.get(endpoint, {
+    params: {
+      ...payload,
+      api_key: process.env.VEDIC_API_KEY
+    }
+  });
 
   setCache(cacheKey, response.data);
   return response.data;
 }
+
 
 // =======================
 // CORE ENDPOINTS
