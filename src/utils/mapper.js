@@ -11,17 +11,7 @@ export function mapHoroscopePayload(body) {
     tob: `${hour}:${minute}`,
     lat: body.latitude,
     lon: body.longitude,
-    tz: body.timezone
-  };
-}
-
-export function mapPanchangPayload(body) {
-  return {
-    day: body.date,
-    month: body.month,
-    year: body.year,
-    lat: body.latitude,
-    lon: body.longitude,
-    tz: body.timezone
+    tz: body.timezone,
+    ayanamsa: 1
   };
 }
