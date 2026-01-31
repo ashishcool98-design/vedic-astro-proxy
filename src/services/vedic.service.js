@@ -1,5 +1,8 @@
 import axios from "axios";
-import { mapBirthDetails } from "../utils/mapper.js";
+import {
+  mapHoroscopePayload,
+  mapPanchangPayload
+} from "../utils/mapper.js";
 import { getCache, setCache } from "../utils/cache.js";
 
 const client = axios.create({
@@ -7,14 +10,14 @@ const client = axios.create({
   timeout: 15000
 });
 
-async function callVedic(endpoint, payload) {
-  const cacheKey = endpoint + JSON.stringify(payload);
+async function callVedic(endpoint, params) {
+  const cacheKey = endpoint + JSON.stringify(params);
   const cached = getCache(cacheKey);
   if (cached) return cached;
 
   const response = await client.get(endpoint, {
     params: {
-      ...payload,
+      ...params,
       api_key: process.env.VEDIC_API_KEY
     }
   });
@@ -23,16 +26,13 @@ async function callVedic(endpoint, payload) {
   return response.data;
 }
 
-
-// =======================
-// CORE ENDPOINTS
-// =======================
+// ================= HOROSCOPE =================
 
 export async function getPlanets(req, res, next) {
   try {
     const data = await callVedic(
       "/horoscope/planet-details",
-      mapBirthDetails(req.body)
+      mapHoroscopePayload(req.body)
     );
     res.json({ output: data });
   } catch (err) {
@@ -44,7 +44,7 @@ export async function getDasha(req, res, next) {
   try {
     const data = await callVedic(
       "/horoscope/vimshottari-dasha",
-      mapBirthDetails(req.body)
+      mapHoroscopePayload(req.body)
     );
     res.json({ output: data });
   } catch (err) {
@@ -52,15 +52,11 @@ export async function getDasha(req, res, next) {
   }
 }
 
-// =======================
-// FREE-TIER EXTENSIONS
-// =======================
-
 export async function getNakshatra(req, res, next) {
   try {
     const data = await callVedic(
       "/horoscope/nakshatra-details",
-      mapBirthDetails(req.body)
+      mapHoroscopePayload(req.body)
     );
     res.json({ output: data });
   } catch (err) {
@@ -72,7 +68,7 @@ export async function getAscendant(req, res, next) {
   try {
     const data = await callVedic(
       "/horoscope/ascendant-report",
-      mapBirthDetails(req.body)
+      mapHoroscopePayload(req.body)
     );
     res.json({ output: data });
   } catch (err) {
@@ -80,11 +76,13 @@ export async function getAscendant(req, res, next) {
   }
 }
 
+// ================= PANCHANG =================
+
 export async function getPanchang(req, res, next) {
   try {
     const data = await callVedic(
       "/panchang",
-      mapBirthDetails(req.body)
+      mapPanchangPayload(req.body)
     );
     res.json({ output: data });
   } catch (err) {
