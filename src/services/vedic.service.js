@@ -42,15 +42,24 @@ export async function getPlanets(req, res, next) {
 
 export async function getDasha(req, res, next) {
   try {
+    const basePayload = mapHoroscopePayload(req.body);
+
+    const dashaPayload = {
+      ...basePayload,
+      mahadasa: true // REQUIRED by Vedic API
+    };
+
     const data = await callVedic(
       "/horoscope/vimshottari-dasha",
-      mapHoroscopePayload(req.body)
+      dashaPayload
     );
+
     res.json({ output: data });
   } catch (err) {
     next(err);
   }
 }
+
 
 export async function getNakshatra(req, res, next) {
   try {
